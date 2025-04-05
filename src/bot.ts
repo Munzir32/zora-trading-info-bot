@@ -173,9 +173,14 @@ bot.onText(/\/portfolio/, async (msg) => {
     await bot.sendMessage(chatId, message);
 });
 
-// Error handling
-bot.on('polling_error', (error) => {
-    console.error('Polling error:', error);
+// Add webhook error handling
+bot.on('webhook_error', (error) => {
+    console.error('Webhook error:', error);
+});
+
+// Add general error handling
+bot.on('error', (error) => {
+    console.error('Bot error:', error);
 });
 
 // Start the bot
