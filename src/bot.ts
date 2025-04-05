@@ -180,3 +180,5 @@ bot.on('polling_error', (error) => {
 
 // Start the bot
 console.log('Zora AI Trading Assistant is running...'); 
+
+export { bot };
