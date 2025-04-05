@@ -2,9 +2,14 @@ import { bot } from "../src/bot.js";
 import { createZoraService } from "../src/services/zoraService.js";
 import { ethers } from "ethers";
 
-// Initialize services
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
-const zoraService = createZoraService(provider, process.env.OPENAI_API_KEY!);
+// Initialize services with error handling
+let zoraService;
+try {
+  const provider = new ethers.JsonRpcProvider(process.env.RPC_URL || 'https://eth-mainnet.g.alchemy.com/v2/demo');
+  zoraService = createZoraService(provider, process.env.OPENAI_API_KEY || '');
+} catch (error) {
+  console.error('Error initializing services:', error);
+}
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
@@ -28,6 +33,11 @@ export default async function handler(req, res) {
             await bot.sendMessage(chatId, 'Welcome to Zora AI Trading Assistant! 🚀\n\nAvailable commands:\n/price <contract> <tokenId> - Get real-time price\n/track <contract> <tokenId> - Track a token in your portfolio\n/portfolio - View your portfolio\n/analyze <contract> <tokenId> - Get AI analysis\n/alerts - Set up price alerts');
           } 
           else if (text.startsWith('/price')) {
+            if (!zoraService) {
+              await bot.sendMessage(chatId, 'Service is not properly initialized. Please contact the administrator.');
+              return;
+            }
+            
             const parts = text.split(' ');
             if (parts.length === 3) {
               const contractAddress = parts[1].toLowerCase();
