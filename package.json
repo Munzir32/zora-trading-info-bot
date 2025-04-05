@@ -6,32 +6,26 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node src/bot.ts",
-    "dev": "ts-node src/bot.ts",
+    "start": "ts-node src/bot.ts",
+    "dev": "nodemon src/bot.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "zora",
-    "trading",
-    "bot",
-    "ai",
-    "telegram"
-  ],
+  "keywords": ["zora", "trading", "bot", "ai", "telegram"],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@zoralabs/protocol-sdk": "latest",
-    "axios": "latest",
+    "node-telegram-bot-api": "^0.61.0",
+    "openai": "^4.0.0",
     "dotenv": "^16.0.0",
     "ethers": "latest",
-    "node-telegram-bot-api": "^0.61.0",
-    "openai": "^4.0.0"
+    "axios": "latest"
   },
   "devDependencies": {
-    "@types/node": "^18.19.86",
+    "@types/node": "^18.0.0",
     "@types/node-telegram-bot-api": "^0.61.0",
     "nodemon": "^2.0.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.4"
   }
-}
+} 
