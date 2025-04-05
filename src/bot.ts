@@ -14,10 +14,13 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Initialize bot in webhook mode
+// Initialize bot
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { 
     polling: false
 });
+
+// Log bot initialization
+console.log('Bot initialized with token:', process.env.TELEGRAM_BOT_TOKEN ? 'Token exists' : 'No token');
 
 interface PortfolioData {
     amount: number;
