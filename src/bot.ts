@@ -14,7 +14,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { polling: true });
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { polling: false });
 
 interface PortfolioData {
     amount: number;
