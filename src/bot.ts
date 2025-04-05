@@ -15,10 +15,7 @@ const openai = new OpenAI({
 });
 
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { 
-    polling: false,
-    webHook: {
-        port: 8443
-    }
+    polling: false
 });
 
 interface PortfolioData {
