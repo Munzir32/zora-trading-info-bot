@@ -14,6 +14,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Initialize bot in webhook mode
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { 
     polling: false
 });

@@ -24,7 +24,7 @@
     "axios": "latest",
     "dotenv": "^16.0.0",
     "ethers": "latest",
-    "node-telegram-bot-api": "^0.61.0",
+    "node-telegram-bot-api": "^0.66.0",
     "openai": "^4.0.0"
   },
   "devDependencies": {
