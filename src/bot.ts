@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
-import { createZoraService } from './services/zoraService.ts';
+import { createZoraService } from './services/zoraService.js';
 import OpenAI from 'openai';
 import TelegramBot from 'node-telegram-bot-api';
 
@@ -139,15 +139,15 @@ bot.onText(/\/trade (.+) (.+)/, async (msg, match) => {
             `• Trend: ${analysis.priceAnalysis.priceTrend}\n` +
             `• Volatility: ${analysis.priceAnalysis.priceVolatility}\n\n` +
             `Trading Signals:\n` +
-            `• Entry Points:\n${analysis.tradingSignals.entryPoints.map(point => `  - ${point}`).join('\n')}\n` +
-            `• Exit Points:\n${analysis.tradingSignals.exitPoints.map(point => `  - ${point}`).join('\n')}\n` +
+            `• Entry Points:\n${analysis.tradingSignals.entryPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
+            `• Exit Points:\n${analysis.tradingSignals.exitPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
             `• Stop Loss: ${analysis.tradingSignals.stopLoss}\n` +
             `• Take Profit: ${analysis.tradingSignals.takeProfit}\n\n` +
             `Risk Assessment:\n` +
             `• Risk Level: ${analysis.riskAssessment.riskLevel}\n` +
             `• ${analysis.riskAssessment.marketLiquidity}\n` +
             `• ${analysis.riskAssessment.volatilityRisk}\n\n` +
-            `Recommendations:\n${analysis.recommendations.map(rec => `• ${rec}`).join('\n')}`;
+            `Recommendations:\n${analysis.recommendations.map((rec: string) => `• ${rec}`).join('\n')}`;
 
         await bot.sendMessage(chatId, message);
     } catch (error) {
