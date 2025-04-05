@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
-import { createZoraService } from './services/zoraService.js';
+import { createZoraService } from './services/zoraService.ts';
 import OpenAI from 'openai';
 import TelegramBot from 'node-telegram-bot-api';
 

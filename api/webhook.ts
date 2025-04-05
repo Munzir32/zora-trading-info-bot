@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       try {
         const update = req.body;
-        await bot.handleUpdate(update);
+        await bot.processUpdate(update);
         res.status(200).json({ ok: true });
       } catch (error) {
         console.error('Error handling update:', error);
