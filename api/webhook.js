@@ -1,6 +1,10 @@
-import { bot } from "../src/bot.ts";
 
-export default async function handler(req, res) {
+import { bot } from "../src/bot";
+
+export default async function handler(
+  req,
+  res
+) {
     if (req.method === 'POST') {
       try {
         const update = req.body;
