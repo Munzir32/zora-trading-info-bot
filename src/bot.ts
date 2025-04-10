@@ -16,7 +16,10 @@ const openai = new OpenAI({
 
 // Initialize bot
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { 
-    polling: false
+    polling: true,
+    // webHook: {
+    //     port: parseInt(process.env.PORT || '8081')
+    // }
 });
 
 // Log bot initialization
@@ -26,6 +29,15 @@ interface PortfolioData {
     amount: number;
     value: number;
     tokenId: string;
+    name: string;
+    symbol: string;
+    description: string;
+    totalSupply: string;
+    marketCap: string;
+    volume24h: string;
+    creatorAddress: string;
+    createdAt: string;
+    uniqueHolders: number;
 }
 
 const userPortfolios = new Map<number, Record<string, PortfolioData>>();
@@ -33,7 +45,7 @@ const userPortfolios = new Map<number, Record<string, PortfolioData>>();
 // Command handlers
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
-    await bot.sendMessage(chatId, 'Welcome to Zora AI Trading Assistant! 🚀\n\nAvailable commands:\n/price <contract> <tokenId> - Get real-time price\n/track <contract> <tokenId> - Track a token in your portfolio\n/portfolio - View your portfolio\n/analyze <contract> <tokenId> - Get AI analysis\n/alerts - Set up price alerts');
+    await bot.sendMessage(chatId, 'Welcome to Zora AI Trading Assistant! 🚀\n\nAvailable commands:\n/price <contract> <tokenId> - Get real-time price for NFTs\n/coinprice <contract> - Get real-time price for Coins\n/track <contract> <tokenId> - Track an NFT in your portfolio\n/trackcoin <contract> - Track a Coin in your portfolio\n/portfolio - View your portfolio\n/analyze <contract> <tokenId> - Get AI analysis for NFTs\n/analyzecoin <contract> - Get AI analysis for Coins\n/alerts - Set up price alerts');
 });
 
 bot.onText(/\/track (.+) (.+)/, async (msg, match) => {
@@ -55,7 +67,16 @@ bot.onText(/\/track (.+) (.+)/, async (msg, match) => {
         portfolio[contractAddress] = {
             amount: 1, // Default to tracking 1 token
             value: price,
-            tokenId
+            tokenId,
+            name: 'N/A',
+            symbol: 'N/A',
+            description: 'N/A',
+            totalSupply: 'N/A',
+            marketCap: 'N/A',
+            volume24h: 'N/A',
+            creatorAddress: 'N/A',
+            createdAt: 'N/A',
+            uniqueHolders: 0
         };
         userPortfolios.set(chatId, portfolio);
         
@@ -177,6 +198,140 @@ bot.onText(/\/portfolio/, async (msg) => {
     }
     
     await bot.sendMessage(chatId, message);
+});
+
+bot.onText(/\/coinprice (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match![1].toLowerCase();
+    
+    try {
+        // Validate address format
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+
+        const {
+            name,
+            symbol,
+            description,
+            totalSupply,
+            marketCap,
+            volume24h,
+            creatorAddress,
+            createdAt,
+            uniqueHolders,
+            totalVolume
+        } = await zoraService.getCoinPrice(contractAddress);
+
+        const message = `📊 Coin Details for ${contractAddress}:\n\n` +
+            `- Name: ${name}\n` +
+            `- Symbol: ${symbol}\n` +
+            `- Description: ${description}\n` +
+            `- Total Supply: ${totalSupply}\n` +
+            `- Market Cap: ${marketCap}\n` +
+            `- 24h Volume: ${volume24h}\n` +
+            `- Creator: ${creatorAddress}\n` +
+            `- Created At: ${createdAt}\n` +
+            `- Unique Holders: ${uniqueHolders}\n` +
+            `- Current Price: ${totalVolume}`;
+
+        await bot.sendMessage(chatId, message);
+    } catch (error) {
+        console.error('Error fetching coin price:', error);
+        await bot.sendMessage(chatId, 'Error fetching coin price. Please make sure the contract address is correct and try again.');
+    }
+});
+
+bot.onText(/\/trackcoin (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match![1].toLowerCase();
+    
+    try {
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+
+        // Get coin details
+        const {
+            name,
+            symbol,
+            description,
+            totalSupply,
+            marketCap,
+            volume24h,
+            creatorAddress,
+            createdAt,
+            uniqueHolders,
+            totalVolume
+        } = await zoraService.getCoinPrice(contractAddress);
+        
+        // Initialize or update portfolio
+        let portfolio = userPortfolios.get(chatId) || {};
+        portfolio[contractAddress] = {
+            amount: 1, // Default to tracking 1 coin
+            value: totalVolume, // Use totalVolume as the price
+            tokenId: 'coin', // Special identifier for coins
+            name,
+            symbol,
+            description,
+            totalSupply,
+            marketCap,
+            volume24h,
+            creatorAddress,
+            createdAt,
+            uniqueHolders
+        };
+        userPortfolios.set(chatId, portfolio);
+        
+        await bot.sendMessage(chatId, `Now tracking coin at contract ${contractAddress} at price ${totalVolume}`);
+    } catch (error) {
+        console.error('Error tracking coin:', error);
+        await bot.sendMessage(chatId, 'Error tracking coin. Please make sure the contract address is correct and try again.');
+    }
+});
+
+bot.onText(/\/analyzecoin (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match![1].toLowerCase();
+    
+    try {
+        // Validate address format
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+
+        // Get coin analysis
+        const analysis = await zoraService.generateCoinAnalysis(contractAddress);
+        
+        // Format the analysis message
+        const message = `📊 Coin Analysis for ${contractAddress}\n\n` +
+            `Market Status:\n` +
+            `• Total Supply: ${analysis.marketStatus.totalSupply}\n` +
+            `• Circulating Supply: ${analysis.marketStatus.circulatingSupply}\n` +
+            `• Market Cap: ${analysis.marketStatus.marketCap}\n\n` +
+            `Price Analysis:\n` +
+            `• Current Price: ${analysis.priceAnalysis.currentPrice}\n` +
+            `• 24h Change: ${analysis.priceAnalysis.priceChange24h}%\n` +
+            `• 24h Volume: ${analysis.priceAnalysis.volume24h}\n\n` +
+            `Trading Signals:\n` +
+            `• Entry Points:\n${analysis.tradingSignals.entryPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
+            `• Exit Points:\n${analysis.tradingSignals.exitPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
+            `• Stop Loss: ${analysis.tradingSignals.stopLoss}\n` +
+            `• Take Profit: ${analysis.tradingSignals.takeProfit}\n\n` +
+            `Risk Assessment:\n` +
+            `• Risk Level: ${analysis.riskAssessment.riskLevel}\n` +
+            `• ${analysis.riskAssessment.liquidity}\n` +
+            `• ${analysis.riskAssessment.volatility}\n\n` +
+            `Recommendations:\n${analysis.recommendations.map((rec: string) => `• ${rec}`).join('\n')}`;
+
+        await bot.sendMessage(chatId, message);
+    } catch (error) {
+        console.error('Error analyzing coin:', error);
+        await bot.sendMessage(chatId, 'Error analyzing coin. Please make sure the contract address is correct and try again.');
+    }
 });
 
 // Add webhook error handling

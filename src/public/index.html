@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zora AI Trading Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .feature-card {
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <img src="https://zora.co/assets/zora-logo.svg" alt="Zora Logo" class="h-8 w-auto">
+                        <h1 class="ml-4 text-2xl font-bold gradient-text">Zora AI Trading Assistant</h1>
+                    </div>
+                    <a href="https://t.me/your_bot_username" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        Start Trading
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-6">
+                        Your AI-Powered Trading Companion for Zora Protocol
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                        Get real-time market analysis, price tracking, and AI-powered insights for both NFTs and Coins on the Zora Protocol.
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#features" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Explore Features
+                        </a>
+                        <a href="#commands" class="bg-white text-indigo-600 px-6 py-3 rounded-lg border border-indigo-600 hover:bg-indigo-50 transition-colors">
+                            View Commands
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">Key Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- NFT Features -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">NFT Trading</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• Real-time price tracking</li>
+                            <li>• Portfolio management</li>
+                            <li>• AI-powered analysis</li>
+                            <li>• Trading signals</li>
+                        </ul>
+                    </div>
+
+                    <!-- Coin Features -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Coin Trading</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• Live coin prices</li>
+                            <li>• Supply tracking</li>
+                            <li>• Market cap analysis</li>
+                            <li>• Volume monitoring</li>
+                        </ul>
+                    </div>
+
+                    <!-- AI Analysis -->
+                    <div class="feature-card bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">AI Analysis</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• Market sentiment</li>
+                            <li>• Risk assessment</li>
+                            <li>• Trading recommendations</li>
+                            <li>• Price predictions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Commands Section -->
+        <section id="commands" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">Available Commands</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- NFT Commands -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">NFT Commands</h3>
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <code class="text-indigo-600">/price &lt;contract&gt; &lt;tokenId&gt;</code>
+                                <p class="text-gray-600 mt-2">Get real-time price for NFTs</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <code class="text-indigo-600">/track &lt;contract&gt; &lt;tokenId&gt;</code>
+                                <p class="text-gray-600 mt-2">Track an NFT in your portfolio</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <code class="text-indigo-600">/analyze &lt;contract&gt; &lt;tokenId&gt;</code>
+                                <p class="text-gray-600 mt-2">Get AI analysis for NFTs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coin Commands -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-4">Coin Commands</h3>
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <code class="text-indigo-600">/coinprice &lt;contract&gt;</code>
+                                <p class="text-gray-600 mt-2">Get real-time price for Coins</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <code class="text-indigo-600">/trackcoin &lt;contract&gt;</code>
+                                <p class="text-gray-600 mt-2">Track a Coin in your portfolio</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <code class="text-indigo-600">/analyzecoin &lt;contract&gt;</code>
+                                <p class="text-gray-600 mt-2">Get AI analysis for Coins</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">About</h3>
+                        <p class="text-gray-400">
+                            Zora AI Trading Assistant helps you navigate the Zora Protocol ecosystem with AI-powered insights and real-time market data.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Links</h3>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><a href="https://docs.zora.co" class="hover:text-white">Zora Documentation</a></li>
+                            <li><a href="https://zora.co" class="hover:text-white">Zora Protocol</a></li>
+                            <li><a href="https://t.me/your_bot_username" class="hover:text-white">Telegram Bot</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                        <p class="text-gray-400">
+                            For support or inquiries, please contact us through our Telegram bot.
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+                    <p>&copy; 2024 Zora AI Trading Assistant. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
