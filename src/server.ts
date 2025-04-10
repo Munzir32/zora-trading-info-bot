@@ -1,5 +1,5 @@
 import express from 'express';
-import { bot } from './bot.js';
+import { bot } from './bot';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';

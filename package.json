@@ -10,13 +10,7 @@
     "dev": "NODE_OPTIONS='--loader ts-node/esm' node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "zora",
-    "trading",
-    "bot",
-    "ai",
-    "telegram"
-  ],
+  "keywords": ["zora", "trading", "bot", "ai", "telegram"],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -36,4 +30,4 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
-}
+} 

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
-import { createZoraService } from './services/zoraService.ts';
+import { createZoraService } from './services/zoraService.js';
 import OpenAI from 'openai';
 import TelegramBot from 'node-telegram-bot-api';
 
@@ -14,16 +14,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Initialize bot
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { 
-    polling: true,
-    // webHook: {
-    //     port: parseInt(process.env.PORT || '8081')
-    // }
-});
-
-// Log bot initialization
-console.log('Bot initialized with token:', process.env.TELEGRAM_BOT_TOKEN ? 'Token exists' : 'No token');
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN!, { polling: true });
 
 interface PortfolioData {
     amount: number;
@@ -346,5 +337,4 @@ bot.on('error', (error) => {
 
 // Start the bot
 console.log('Zora AI Trading Assistant is running...'); 
-
-export { bot };
+export {bot}
