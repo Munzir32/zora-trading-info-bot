@@ -9,7 +9,6 @@
     "rootDir": "./src",  // Ensure the 'src' folder is where your source code lives
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    // "allowImportingTsExtensions": true,  // Re-enable if necessary
     "noEmit": false  // Ensure emitting of JS files
   },
   "include": ["src/**/*"],
