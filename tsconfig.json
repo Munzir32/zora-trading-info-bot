@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "ES2020",
-      "moduleResolution": "bundler",
-      "esModuleInterop": true,
-      "strict": true,
-      "outDir": "./dist",
-      "rootDir": "./src",
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "allowImportingTsExtensions": true,
-      "noEmit": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
-  }
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "./dist",         // Output compiled files to the 'dist' folder
+    "rootDir": "./src",         // The source files are in the 'src' folder
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    // "allowImportingTsExtensions": true,
+    "noEmit": false             // Ensure that TypeScript emits the JavaScript files
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
