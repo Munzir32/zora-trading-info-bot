@@ -288,25 +288,55 @@ bot.onText(/\/analyzecoin (.+)/, async (msg, match) => {
     const contractAddress = match![1].toLowerCase();
     
     try {
-        // Validate address format
         if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
             await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
             return;
         }
 
-        // Get coin analysis
-        const analysis = await zoraService.generateCoinAnalysis(contractAddress);
+        const analysis = await zoraService.analyzeCoin(contractAddress);
         
-        // Format the analysis message
-        const message = `📊 Coin Analysis for ${contractAddress}\n\n` +
+        const message = `📊 Analysis for Coin at ${contractAddress}:\n\n` +
             `Market Status:\n` +
             `• Total Supply: ${analysis.marketStatus.totalSupply}\n` +
-            `• Circulating Supply: ${analysis.marketStatus.circulatingSupply}\n` +
-            `• Market Cap: ${analysis.marketStatus.marketCap}\n\n` +
+            `• 24h Volume: ${analysis.marketStatus.volume24h}\n` +
+            `• Total Volume: ${analysis.marketStatus.totalVolume}\n\n` +
             `Price Analysis:\n` +
             `• Current Price: ${analysis.priceAnalysis.currentPrice}\n` +
-            `• 24h Change: ${analysis.priceAnalysis.priceChange24h}%\n` +
-            `• 24h Volume: ${analysis.priceAnalysis.volume24h}\n\n` +
+            `• Trend: ${analysis.priceAnalysis.priceTrend}\n` +
+            `• Volatility: ${analysis.priceAnalysis.priceVolatility}\n\n` +
+            `Risk Assessment:\n` +
+            `• Risk Level: ${analysis.riskAssessment.riskLevel}\n` +
+            `• ${analysis.riskAssessment.liquidity}\n` +
+            `• ${analysis.riskAssessment.volatility}`;
+
+        await bot.sendMessage(chatId, message);
+    } catch (error) {
+        console.error('Error analyzing coin:', error);
+        await bot.sendMessage(chatId, 'Error analyzing coin. Please make sure the contract address is correct and try again.');
+    }
+});
+
+bot.onText(/\/tradinganalysiscoin (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match![1].toLowerCase();
+    
+    try {
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+
+        const analysis = await zoraService.generateCoinTradingAnalysis(contractAddress);
+        
+        const message = `📊 Trading Analysis for Coin at ${contractAddress}:\n\n` +
+            `Market Status:\n` +
+            `• Total Supply: ${analysis.marketStatus.totalSupply}\n` +
+            `• 24h Volume: ${analysis.marketStatus.volume24h}\n` +
+            `• Total Volume: ${analysis.marketStatus.totalVolume}\n\n` +
+            `Price Analysis:\n` +
+            `• Current Price: ${analysis.priceAnalysis.currentPrice}\n` +
+            `• Trend: ${analysis.priceAnalysis.priceTrend}\n` +
+            `• Volatility: ${analysis.priceAnalysis.priceVolatility}\n\n` +
             `Trading Signals:\n` +
             `• Entry Points:\n${analysis.tradingSignals.entryPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
             `• Exit Points:\n${analysis.tradingSignals.exitPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
@@ -320,8 +350,33 @@ bot.onText(/\/analyzecoin (.+)/, async (msg, match) => {
 
         await bot.sendMessage(chatId, message);
     } catch (error) {
-        console.error('Error analyzing coin:', error);
-        await bot.sendMessage(chatId, 'Error analyzing coin. Please make sure the contract address is correct and try again.');
+        console.error('Error generating trading analysis:', error);
+        await bot.sendMessage(chatId, 'Error generating trading analysis. Please make sure the contract address is correct and try again.');
+    }
+});
+
+bot.onText(/\/tradecoin (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match![1].toLowerCase();
+    
+    try {
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+
+        const trade = await zoraService.generateCoinTrade(contractAddress);
+        
+        const message = `📊 Trade Recommendations for Coin at ${contractAddress}:\n\n` +
+            `Entry Points:\n${trade.entryPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
+            `Exit Points:\n${trade.exitPoints.map((point: string) => `  - ${point}`).join('\n')}\n` +
+            `Stop Loss: ${trade.stopLoss}\n` +
+            `Take Profit: ${trade.takeProfit}`;
+
+        await bot.sendMessage(chatId, message);
+    } catch (error) {
+        console.error('Error generating trade:', error);
+        await bot.sendMessage(chatId, 'Error generating trade. Please make sure the contract address is correct and try again.');
     }
 });
 

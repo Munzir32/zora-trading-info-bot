@@ -298,6 +298,110 @@ export const createZoraService = (provider: ethers.JsonRpcProvider, apiKey: stri
                 console.error('Error generating coin analysis:', error);
                 throw error;
             }
+        },
+
+        generateCoinTradingAnalysis: async (contractAddress: string): Promise<any> => {
+            try {
+                const result = await getCoin({
+                    address: contractAddress,
+                    chain: base.id // Use Base chain
+                });
+
+                if (!result.data?.zora20Token) {
+                    throw new Error('Coin data not found');
+                }
+
+                const coin = result.data.zora20Token;
+
+                return {
+                    marketStatus: {
+                        totalSupply: coin.totalSupply,
+                        volume24h: coin.volume24h,
+                        totalVolume: coin.totalVolume
+                    },
+                    priceAnalysis: {
+                        currentPrice: Number(coin.totalVolume) || 0,
+                        priceTrend: 'neutral', // Placeholder
+                        priceVolatility: 'medium' // Placeholder
+                    },
+                    tradingSignals: {
+                        entryPoints: generateCoinEntryPoints(coin),
+                        exitPoints: generateCoinExitPoints(coin),
+                        stopLoss: calculateCoinStopLoss(coin),
+                        takeProfit: calculateCoinTakeProfit(coin)
+                    },
+                    riskAssessment: {
+                        riskLevel: assessCoinRiskLevel(coin),
+                        liquidity: assessCoinLiquidity(coin),
+                        volatility: assessCoinVolatility(coin)
+                    },
+                    recommendations: generateCoinRecommendations(coin)
+                };
+            } catch (error) {
+                console.error('Error generating trading analysis:', error);
+                throw error;
+            }
+        },
+
+        generateCoinTrade: async (contractAddress: string): Promise<any> => {
+            try {
+                const result = await getCoin({
+                    address: contractAddress,
+                    chain: base.id 
+                });
+
+                if (!result.data?.zora20Token) {
+                    throw new Error('Coin data not found');
+                }
+
+                const coin = result.data.zora20Token;
+
+                return {
+                    entryPoints: generateCoinEntryPoints(coin),
+                    exitPoints: generateCoinExitPoints(coin),
+                    stopLoss: calculateCoinStopLoss(coin),
+                    takeProfit: calculateCoinTakeProfit(coin)
+                };
+            } catch (error) {
+                console.error('Error generating trade:', error);
+                throw error;
+            }
+        },
+
+        analyzeCoin: async (contractAddress: string): Promise<any> => {
+            try {
+                const result = await getCoin({
+                    address: contractAddress,
+                    chain: base.id // Use Base chain
+                });
+
+                if (!result.data?.zora20Token) {
+                    throw new Error('Coin data not found');
+                }
+
+                const coin = result.data.zora20Token;
+
+                return {
+                    marketStatus: {
+                        totalSupply: coin.totalSupply,
+                        volume24h: coin.volume24h,
+                        totalVolume: coin.totalVolume
+                    },
+                    priceAnalysis: {
+                        currentPrice: Number(coin.totalVolume) || 0,
+                        priceTrend: 'neutral', 
+                        priceVolatility: 'medium' 
+                    },
+                    riskAssessment: {
+                        riskLevel: assessCoinRiskLevel(coin),
+                        liquidity: assessCoinLiquidity(coin),
+                        volatility: assessCoinVolatility(coin)
+                    }
+                };
+            } catch (error) {
+                console.error('Error analyzing coin:', error);
+                throw error;
+            }
         }
     };
 };
