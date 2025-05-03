@@ -4,6 +4,12 @@ import { ethers } from 'ethers';
 import { mainnet, base } from 'viem/chains';
 import { createPublicClient, http } from 'viem';
 
+
+type ExploreQueryOptions = {
+  after?: string;    
+  count?: number;     
+};
+
 export const createZoraService = (provider: ethers.JsonRpcProvider, apiKey: string) => {
     const publicClient = createPublicClient({
         chain: mainnet,
@@ -144,14 +150,12 @@ export const createZoraService = (provider: ethers.JsonRpcProvider, apiKey: stri
                     throw new Error('Token data not found');
                 }
 
-                // Convert BigInt values to strings
                 const tokenData = marketData.token as any;
                 const convertedData = Object.entries(tokenData).reduce((acc, [key, value]) => {
                     acc[key] = typeof value === 'bigint' ? value.toString() : value;
                     return acc;
                 }, {} as Record<string, any>);
 
-                // Generate trading analysis
                 const analysis = {
                     marketStatus: {
                         primaryMintActive: marketData.primaryMintActive,
@@ -214,7 +218,6 @@ export const createZoraService = (provider: ethers.JsonRpcProvider, apiKey: stri
 
                 const coin = result.data.zora20Token;
 
-                // Return all details about the coin
                 return {
                     name: coin.name || 'N/A',
                     symbol: coin.symbol || 'N/A',
@@ -321,8 +324,8 @@ export const createZoraService = (provider: ethers.JsonRpcProvider, apiKey: stri
                     },
                     priceAnalysis: {
                         currentPrice: Number(coin.totalVolume) || 0,
-                        priceTrend: 'neutral', // Placeholder
-                        priceVolatility: 'medium' // Placeholder
+                        priceTrend: 'neutral',
+                        priceVolatility: 'medium' 
                     },
                     tradingSignals: {
                         entryPoints: generateCoinEntryPoints(coin),
@@ -400,6 +403,99 @@ export const createZoraService = (provider: ethers.JsonRpcProvider, apiKey: stri
                 };
             } catch (error) {
                 console.error('Error analyzing coin:', error);
+                throw error;
+            }
+        },
+        getCoinsTopGainers: async (options?: ExploreQueryOptions) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=TOP_GAINERS&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge: any) => edge.node) || [];
+            } catch (error) {
+                console.error('Error fetching top gainers:', error);
+                throw error;
+            }
+        },
+
+        getCoinsTopVolume24h: async (options?: ExploreQueryOptions) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=TOP_VOLUME_24H&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge: any) => edge.node) || [];
+            } catch (error) {
+                console.error('Error fetching top volume coins:', error);
+                throw error;
+            }
+        },
+
+        getCoinsMostValuable: async (options?: ExploreQueryOptions) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=MOST_VALUABLE&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge: any) => edge.node) || [];
+            } catch (error) {
+                console.error('Error fetching most valuable coins:', error);
+                throw error;
+            }
+        },
+
+        getCoinsNew: async (options?: ExploreQueryOptions) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=NEW&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge: any) => edge.node) || [];
+            } catch (error) {
+                console.error('Error fetching new coins:', error);
+                throw error;
+            }
+        },
+
+        getCoinsLastTraded: async (options?: ExploreQueryOptions) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=LAST_TRADED&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge: any) => edge.node) || [];
+            } catch (error) {
+                console.error('Error fetching last traded coins:', error);
+                throw error;
+            }
+        },
+
+        getCoinsLastTradedUnique: async (options?: ExploreQueryOptions) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=LAST_TRADED_UNIQUE&count=10', {
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge: any) => edge.node) || [];
+            } catch (error) {
+                console.error('Error fetching last traded unique coins:', error);
+                throw error;
+            }
+        },
+
+        generateTradingSignals: async function ()  {
+            try {
+                // Fetch top gainers data
+                const topGainers = await this.getCoinsTopGainers();
+
+                const signals = topGainers.map((coin: any) => {
+                    const { marketCapDelta24h, volume24h, uniqueHolders } = coin;
+
+                    if (marketCapDelta24h > 1000 && volume24h > 500 && uniqueHolders > 100) {
+                        return { ...coin, signal: 'Buy' };
+                    } else if (marketCapDelta24h < 0 && volume24h < 100) {
+                        return { ...coin, signal: 'Sell' };
+                    } else {
+                        return { ...coin, signal: 'Hold' };
+                    }
+                });
+
+                return signals;
+            } catch (error) {
+                console.error('Error generating trading signals:', error);
                 throw error;
             }
         }

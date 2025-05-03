@@ -20,12 +20,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node-cron": "^3.0.11",
     "@zoralabs/coins-sdk": "^0.0.7",
     "@zoralabs/protocol-sdk": "^0.13.5",
     "dotenv": "^16.0.3",
     "ethers": "^6.0.0",
     "express": "^4.18.2",
     "next": "^15.3.0",
+    "node-cron": "^3.0.3",
     "node-telegram-bot-api": "^0.61.0",
     "openai": "^4.0.0",
     "viem": "^2.7.12"
