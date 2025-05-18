@@ -218,23 +218,49 @@ bot.onText(/\/analyzecoin (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const contractAddress = match[1].toLowerCase();
     try {
-        // Validate address format
         if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
             await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
             return;
         }
-        // Get coin analysis
-        const analysis = await zoraService.generateCoinAnalysis(contractAddress);
-        // Format the analysis message
-        const message = `📊 Coin Analysis for ${contractAddress}\n\n` +
+        const analysis = await zoraService.analyzeCoin(contractAddress);
+        const message = `📊 Analysis for Coin at ${contractAddress}:\n\n` +
             `Market Status:\n` +
             `• Total Supply: ${analysis.marketStatus.totalSupply}\n` +
-            `• Circulating Supply: ${analysis.marketStatus.circulatingSupply}\n` +
-            `• Market Cap: ${analysis.marketStatus.marketCap}\n\n` +
+            `• 24h Volume: ${analysis.marketStatus.volume24h}\n` +
+            `• Total Volume: ${analysis.marketStatus.totalVolume}\n\n` +
             `Price Analysis:\n` +
             `• Current Price: ${analysis.priceAnalysis.currentPrice}\n` +
-            `• 24h Change: ${analysis.priceAnalysis.priceChange24h}%\n` +
-            `• 24h Volume: ${analysis.priceAnalysis.volume24h}\n\n` +
+            `• Trend: ${analysis.priceAnalysis.priceTrend}\n` +
+            `• Volatility: ${analysis.priceAnalysis.priceVolatility}\n\n` +
+            `Risk Assessment:\n` +
+            `• Risk Level: ${analysis.riskAssessment.riskLevel}\n` +
+            `• ${analysis.riskAssessment.liquidity}\n` +
+            `• ${analysis.riskAssessment.volatility}`;
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        console.error('Error analyzing coin:', error);
+        await bot.sendMessage(chatId, 'Error analyzing coin. Please make sure the contract address is correct and try again.');
+    }
+});
+bot.onText(/\/tradinganalysiscoin (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match[1].toLowerCase();
+    try {
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+        const analysis = await zoraService.generateCoinTradingAnalysis(contractAddress);
+        const message = `📊 Trading Analysis for Coin at ${contractAddress}:\n\n` +
+            `Market Status:\n` +
+            `• Total Supply: ${analysis.marketStatus.totalSupply}\n` +
+            `• 24h Volume: ${analysis.marketStatus.volume24h}\n` +
+            `• Total Volume: ${analysis.marketStatus.totalVolume}\n\n` +
+            `Price Analysis:\n` +
+            `• Current Price: ${analysis.priceAnalysis.currentPrice}\n` +
+            `• Trend: ${analysis.priceAnalysis.priceTrend}\n` +
+            `• Volatility: ${analysis.priceAnalysis.priceVolatility}\n\n` +
             `Trading Signals:\n` +
             `• Entry Points:\n${analysis.tradingSignals.entryPoints.map((point) => `  - ${point}`).join('\n')}\n` +
             `• Exit Points:\n${analysis.tradingSignals.exitPoints.map((point) => `  - ${point}`).join('\n')}\n` +
@@ -248,8 +274,143 @@ bot.onText(/\/analyzecoin (.+)/, async (msg, match) => {
         await bot.sendMessage(chatId, message);
     }
     catch (error) {
-        console.error('Error analyzing coin:', error);
-        await bot.sendMessage(chatId, 'Error analyzing coin. Please make sure the contract address is correct and try again.');
+        console.error('Error generating trading analysis:', error);
+        await bot.sendMessage(chatId, 'Error generating trading analysis. Please make sure the contract address is correct and try again.');
+    }
+});
+bot.onText(/\/tradecoin (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    const contractAddress = match[1].toLowerCase();
+    try {
+        if (!contractAddress.startsWith('0x') || contractAddress.length !== 42) {
+            await bot.sendMessage(chatId, 'Invalid contract address. Please provide a valid Ethereum address.');
+            return;
+        }
+        const trade = await zoraService.generateCoinTrade(contractAddress);
+        const message = `📊 Trade Recommendations for Coin at ${contractAddress}:\n\n` +
+            `Entry Points:\n${trade.entryPoints.map((point) => `  - ${point}`).join('\n')}\n` +
+            `Exit Points:\n${trade.exitPoints.map((point) => `  - ${point}`).join('\n')}\n` +
+            `Stop Loss: ${trade.stopLoss}\n` +
+            `Take Profit: ${trade.takeProfit}`;
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        console.error('Error generating trade:', error);
+        await bot.sendMessage(chatId, 'Error generating trade. Please make sure the contract address is correct and try again.');
+    }
+});
+bot.onText(/\/topgainers/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const topGainers = await zoraService.getCoinsTopGainers({ count: 10 });
+        const message = `📈 Top Gainers:\n\n` +
+            topGainers.map((coin, index) => `${index + 1}. ${coin.name} (${coin.symbol})\n` +
+                `   24h Change: ${coin.marketCapDelta24h ? `${parseFloat(coin.marketCapDelta24h).toFixed(2)}%` : 'N/A'}\n` +
+                `   Market Cap: ${coin.marketCap}\n` +
+                `   Volume 24h: ${coin.volume24h}\n` +
+                '-----------------------------------').join('\n');
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        await bot.sendMessage(chatId, 'Error fetching top gainers. Please try again later.');
+    }
+});
+bot.onText(/\/topvolume/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const topVolume = await zoraService.getCoinsTopVolume24h({ count: 10 });
+        const message = `📊 Top Volume Coins:\n\n` +
+            topVolume.map((coin, index) => `${index + 1}. ${coin.name} (${coin.symbol})\n` +
+                `   Volume 24h: ${coin.volume24h}\n` +
+                `   Market Cap: ${coin.marketCap}\n` +
+                `   Holders: ${coin.uniqueHolders}\n` +
+                '-----------------------------------').join('\n');
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        await bot.sendMessage(chatId, 'Error fetching top volume coins. Please try again later.');
+    }
+});
+bot.onText(/\/mostvaluable/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const mostValuable = await zoraService.getCoinsMostValuable({ count: 10 });
+        const message = `💰 Most Valuable Coins:\n\n` +
+            mostValuable.map((coin, index) => `${index + 1}. ${coin.name} (${coin.symbol})\n` +
+                `   Market Cap: ${coin.marketCap}\n` +
+                `   Volume 24h: ${coin.volume24h}\n` +
+                `   Created: ${coin.createdAt}\n` +
+                '-----------------------------------').join('\n');
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        await bot.sendMessage(chatId, 'Error fetching most valuable coins. Please try again later.');
+    }
+});
+bot.onText(/\/newcoins/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const newCoins = await zoraService.getCoinsNew({ count: 10 });
+        const message = `🆕 New Coins:\n\n` +
+            newCoins.map((coin, index) => `${index + 1}. ${coin.name} (${coin.symbol})\n` +
+                `   Created: ${new Date(coin.createdAt || "").toLocaleString()}\n` +
+                `   Creator: ${coin.creatorAddress}\n` +
+                `   Market Cap: ${coin.marketCap}\n` +
+                '-----------------------------------').join('\n');
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        await bot.sendMessage(chatId, 'Error fetching new coins. Please try again later.');
+    }
+});
+bot.onText(/\/lasttraded/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const lastTraded = await zoraService.getCoinsLastTraded({ count: 10 });
+        const message = `🔄 Last Traded Coins:\n\n` +
+            lastTraded.map((coin, index) => `${index + 1}. ${coin.name} (${coin.symbol})\n` +
+                `   Market Cap: ${coin.marketCap}\n` +
+                `   Volume 24h: ${coin.volume24h}\n` +
+                '-----------------------------------').join('\n');
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        await bot.sendMessage(chatId, 'Error fetching last traded coins. Please try again later.');
+    }
+});
+bot.onText(/\/lasttradedunique/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const lastTradedUnique = await zoraService.getCoinsLastTradedUnique({ count: 10 });
+        const message = `🔄 Last Traded Coins by Unique Traders:\n\n` +
+            lastTradedUnique.map((coin, index) => `${index + 1}. ${coin.name} (${coin.symbol})\n` +
+                `   Market Cap: ${coin.marketCap}\n` +
+                `   Volume 24h: ${coin.volume24h}\n` +
+                `   Unique Holders: ${coin.uniqueHolders}\n` +
+                '-----------------------------------').join('\n');
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        await bot.sendMessage(chatId, 'Error fetching last traded unique coins. Please try again later.');
+    }
+});
+bot.onText(/\/tradinganalyze/, async (msg) => {
+    const chatId = msg.chat.id;
+    try {
+        const signals = await zoraService.generateTradingSignals();
+        const message = `📊 Trading Signals:\n\n` +
+            signals.map((signal, index) => `${index + 1}. ${signal.name} (${signal.symbol})\n` +
+                `   Signal: ${signal.signal}\n` +
+                `   Market Cap Delta (24h): ${signal.marketCapDelta24h}\n` +
+                `   Volume (24h): ${signal.volume24h}\n` +
+                `   Unique Holders: ${signal.uniqueHolders}\n` +
+                '-----------------------------------').join('\n');
+        // Send the message
+        await bot.sendMessage(chatId, message);
+    }
+    catch (error) {
+        console.error('Error generating trading signals:', error);
+        await bot.sendMessage(chatId, 'Error generating trading signals. Please try again later.');
     }
 });
 // Add webhook error handling

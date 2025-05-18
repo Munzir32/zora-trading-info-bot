@@ -128,13 +128,11 @@ export const createZoraService = (provider, apiKey) => {
                 if (!marketData || !marketData.token) {
                     throw new Error('Token data not found');
                 }
-                // Convert BigInt values to strings
                 const tokenData = marketData.token;
                 const convertedData = Object.entries(tokenData).reduce((acc, [key, value]) => {
                     acc[key] = typeof value === 'bigint' ? value.toString() : value;
                     return acc;
                 }, {});
-                // Generate trading analysis
                 const analysis = {
                     marketStatus: {
                         primaryMintActive: marketData.primaryMintActive,
@@ -181,7 +179,6 @@ export const createZoraService = (provider, apiKey) => {
                     throw new Error('Coin data not found. Please ensure the contract is supported on the Base chain.');
                 }
                 const coin = result.data.zora20Token;
-                // Return all details about the coin
                 return {
                     name: coin.name || 'N/A',
                     symbol: coin.symbol || 'N/A',
@@ -259,6 +256,194 @@ export const createZoraService = (provider, apiKey) => {
             }
             catch (error) {
                 console.error('Error generating coin analysis:', error);
+                throw error;
+            }
+        },
+        generateCoinTradingAnalysis: async (contractAddress) => {
+            try {
+                const result = await getCoin({
+                    address: contractAddress,
+                    chain: base.id // Use Base chain
+                });
+                if (!result.data?.zora20Token) {
+                    throw new Error('Coin data not found');
+                }
+                const coin = result.data.zora20Token;
+                return {
+                    marketStatus: {
+                        totalSupply: coin.totalSupply,
+                        volume24h: coin.volume24h,
+                        totalVolume: coin.totalVolume
+                    },
+                    priceAnalysis: {
+                        currentPrice: Number(coin.totalVolume) || 0,
+                        priceTrend: 'neutral',
+                        priceVolatility: 'medium'
+                    },
+                    tradingSignals: {
+                        entryPoints: generateCoinEntryPoints(coin),
+                        exitPoints: generateCoinExitPoints(coin),
+                        stopLoss: calculateCoinStopLoss(coin),
+                        takeProfit: calculateCoinTakeProfit(coin)
+                    },
+                    riskAssessment: {
+                        riskLevel: assessCoinRiskLevel(coin),
+                        liquidity: assessCoinLiquidity(coin),
+                        volatility: assessCoinVolatility(coin)
+                    },
+                    recommendations: generateCoinRecommendations(coin)
+                };
+            }
+            catch (error) {
+                console.error('Error generating trading analysis:', error);
+                throw error;
+            }
+        },
+        generateCoinTrade: async (contractAddress) => {
+            try {
+                const result = await getCoin({
+                    address: contractAddress,
+                    chain: base.id
+                });
+                if (!result.data?.zora20Token) {
+                    throw new Error('Coin data not found');
+                }
+                const coin = result.data.zora20Token;
+                return {
+                    entryPoints: generateCoinEntryPoints(coin),
+                    exitPoints: generateCoinExitPoints(coin),
+                    stopLoss: calculateCoinStopLoss(coin),
+                    takeProfit: calculateCoinTakeProfit(coin)
+                };
+            }
+            catch (error) {
+                console.error('Error generating trade:', error);
+                throw error;
+            }
+        },
+        analyzeCoin: async (contractAddress) => {
+            try {
+                const result = await getCoin({
+                    address: contractAddress,
+                    chain: base.id // Use Base chain
+                });
+                if (!result.data?.zora20Token) {
+                    throw new Error('Coin data not found');
+                }
+                const coin = result.data.zora20Token;
+                return {
+                    marketStatus: {
+                        totalSupply: coin.totalSupply,
+                        volume24h: coin.volume24h,
+                        totalVolume: coin.totalVolume
+                    },
+                    priceAnalysis: {
+                        currentPrice: Number(coin.totalVolume) || 0,
+                        priceTrend: 'neutral',
+                        priceVolatility: 'medium'
+                    },
+                    riskAssessment: {
+                        riskLevel: assessCoinRiskLevel(coin),
+                        liquidity: assessCoinLiquidity(coin),
+                        volatility: assessCoinVolatility(coin)
+                    }
+                };
+            }
+            catch (error) {
+                console.error('Error analyzing coin:', error);
+                throw error;
+            }
+        },
+        getCoinsTopGainers: async (options) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=TOP_GAINERS&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge) => edge.node) || [];
+            }
+            catch (error) {
+                console.error('Error fetching top gainers:', error);
+                throw error;
+            }
+        },
+        getCoinsTopVolume24h: async (options) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=TOP_VOLUME_24H&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge) => edge.node) || [];
+            }
+            catch (error) {
+                console.error('Error fetching top volume coins:', error);
+                throw error;
+            }
+        },
+        getCoinsMostValuable: async (options) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=MOST_VALUABLE&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge) => edge.node) || [];
+            }
+            catch (error) {
+                console.error('Error fetching most valuable coins:', error);
+                throw error;
+            }
+        },
+        getCoinsNew: async (options) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=NEW&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge) => edge.node) || [];
+            }
+            catch (error) {
+                console.error('Error fetching new coins:', error);
+                throw error;
+            }
+        },
+        getCoinsLastTraded: async (options) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=LAST_TRADED&count=10');
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge) => edge.node) || [];
+            }
+            catch (error) {
+                console.error('Error fetching last traded coins:', error);
+                throw error;
+            }
+        },
+        getCoinsLastTradedUnique: async (options) => {
+            try {
+                const response = await fetch('https://api-sdk.zora.engineering/explore?listType=LAST_TRADED_UNIQUE&count=10', {
+                    headers: {
+                        'accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                return data.exploreList?.edges?.map((edge) => edge.node) || [];
+            }
+            catch (error) {
+                console.error('Error fetching last traded unique coins:', error);
+                throw error;
+            }
+        },
+        generateTradingSignals: async function () {
+            try {
+                // Fetch top gainers data
+                const topGainers = await this.getCoinsTopGainers();
+                const signals = topGainers.map((coin) => {
+                    const { marketCapDelta24h, volume24h, uniqueHolders } = coin;
+                    if (marketCapDelta24h > 1000 && volume24h > 500 && uniqueHolders > 100) {
+                        return { ...coin, signal: 'Buy' };
+                    }
+                    else if (marketCapDelta24h < 0 && volume24h < 100) {
+                        return { ...coin, signal: 'Sell' };
+                    }
+                    else {
+                        return { ...coin, signal: 'Hold' };
+                    }
+                });
+                return signals;
+            }
+            catch (error) {
+                console.error('Error generating trading signals:', error);
                 throw error;
             }
         }
